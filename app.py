@@ -89,16 +89,18 @@ test_predictions = model.predict(X_test_final)
 # -------------------------------
 # STEP 10: Save CSV (IMPORTANT ⭐)
 # -------------------------------
-# -------------------------------
-# STEP 10: Add Type of Passenger
+# STEP 10: Create FINAL CSV (Full Data + Prediction + Type)
 # -------------------------------
 
-# Convert test_processed back to DataFrame for interpretation
-test_processed_copy = test_processed.copy()
+# Copy original test data
+output_df = test_df.copy()
 
-# Function to describe passenger type
+# Add predictions
+output_df["Survived"] = test_predictions
+
+# Function to define passenger type
 def get_passenger_type(row):
-    gender = "Female" if row['Sex'] == 1 else "Male"
+    gender = row['Sex'].capitalize()
     
     if row['Pclass'] == 1:
         pclass = "1st Class"
@@ -107,7 +109,9 @@ def get_passenger_type(row):
     else:
         pclass = "3rd Class"
     
-    if row['Age'] < 18:
+    if pd.isnull(row['Age']):
+        age_group = "Unknown"
+    elif row['Age'] < 18:
         age_group = "Child"
     elif row['Age'] < 50:
         age_group = "Adult"
@@ -116,21 +120,28 @@ def get_passenger_type(row):
     
     return f"{gender}, {pclass}, {age_group}"
 
-# Apply function
-test_processed_copy["Type"] = test_processed_copy.apply(get_passenger_type, axis=1)
+# Add Type column
+output_df["Type"] = output_df.apply(get_passenger_type, axis=1)
 
-# Add predictions
-test_processed_copy["Survived"] = test_predictions
+# Reorder columns (IMPORTANT ⭐)
+final_df = output_df[[
+    "PassengerId",
+    "Survived",
+    "Pclass",
+    "Name",
+    "Sex",
+    "Age",
+    "SibSp",
+    "Parch",
+    "Ticket",
+    "Fare",
+    "Cabin",
+    "Embarked",
+    "Type"
+]]
 
-# Final CSV
-submission = pd.DataFrame({
-    "PassengerId": passenger_ids,
-    "Survived": test_predictions,
-    "Type": test_processed_copy["Type"]
-})
-
-submission.to_csv("survival_prediction.csv", index=False)
-
+# Save CSV
+final_df.to_csv("survival_prediction.csv", index=False)
 print("survival_prediction.csv created!")
 
 print("\nSurvival Insights:")
