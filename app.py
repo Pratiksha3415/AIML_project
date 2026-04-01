@@ -169,3 +169,33 @@ print("Average Age of Survivors:",
 
 print("Average Age of Non-Survivors:",
       round(insight_df[insight_df['Survived'] == 0]['Age'].mean(), 1))
+
+
+# import seaborn as sns
+# import matplotlib.pyplot as plt
+
+# # Load dataset
+# df = pd.read_csv("train.csv")
+
+# # Fill missing values
+# df['Age'].fillna(df['Age'].median(), inplace=True)
+
+# # 1. Survival by Gender
+# sns.countplot(x='Sex', hue='Survived', data=df)
+# plt.title("Survival by Gender")
+# plt.show()
+
+# # 2. Survival by Class
+# sns.countplot(x='Pclass', hue='Survived', data=df)
+# plt.title("Survival by Passenger Class")
+# plt.show()
+
+# # 3. Age Distribution
+# sns.histplot(df['Age'], bins=20)
+# plt.title("Age Distribution")
+# plt.show()
+
+# # 4. Fare vs Survival
+# sns.boxplot(x='Survived', y='Fare', data=df)
+# plt.title("Fare vs Survival")
+# plt.show()
